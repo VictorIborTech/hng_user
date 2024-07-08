@@ -95,13 +95,13 @@ class LoginView(generics.GenericAPIView):
         
 
 class UserDetailView(generics.RetrieveAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = 'userId'
 
 class OrganisationListCreateView(generics.ListCreateAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = OrganisationSerializer
 
     def get_queryset(self):
@@ -174,8 +174,8 @@ class AddUserToOrganisationView(generics.CreateAPIView):
     serializer_class = AddUserToOrganisationSerializer
 
     def create(self, request, *args, **kwargs):
-        userId = self.kwargs.get('userId')
-        organisation = get_object_or_404(Organisation, userId=userId)
+        orgId = self.kwargs.get('orgId')
+        organisation = get_object_or_404(Organisation, orgId=orgId)
         
         serializer = self.get_serializer(data=request.data, context={'organisation': organisation})
         serializer.is_valid(raise_exception=True)

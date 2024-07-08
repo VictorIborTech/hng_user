@@ -57,7 +57,7 @@ class CreateOrganisationSerializer(serializers.ModelSerializer):
         return value
 
 class AddUserToOrganisationSerializer(serializers.Serializer):
-    userId = serializers.IntegerField()
+    userId = serializers.CharField()
 
     def validate_id(self, value):
         try:
