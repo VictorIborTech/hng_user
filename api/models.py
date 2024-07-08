@@ -20,7 +20,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class User(AbstractBaseUser):
-    id = models.AutoField(primary_key=True, unique=True)
+    userId = models.AutoField(primary_key=True, unique=True)
     firstName = models.CharField(max_length=255)
     lastName = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -36,7 +36,7 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = ['firstName', 'lastName']
 
 class Organisation(models.Model):
-    id = models.AutoField(primary_key=True, unique=True)
+    orgId = models.AutoField(primary_key=True, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='organisations')
