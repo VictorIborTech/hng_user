@@ -74,7 +74,7 @@ class LoginView(generics.GenericAPIView):
                     "data": {
                         # "accessToken":token,
                         # "user": UserSerializer(user).data
-                        'refresh': str(refresh),
+                        
                         'accessToken': str(refresh.access_token),
                         "user":  {
                             "id": user.id,
