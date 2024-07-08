@@ -45,7 +45,7 @@ class RegisterView(generics.CreateAPIView):
             "message": "Registration successful",
             "data": {
                 "refresh": str(refresh),
-                "access": str(refresh.access_token),
+                "accessToken": str(refresh.access_token),
                 "user": UserSerializer(user).data
             }
         }, status=status.HTTP_201_CREATED)
@@ -75,9 +75,9 @@ class LoginView(generics.GenericAPIView):
                         # "accessToken":token,
                         # "user": UserSerializer(user).data
                         'refresh': str(refresh),
-                        'access': str(refresh.access_token),
+                        'accessToken': str(refresh.access_token),
                         "user":  {
-                            "userId": user.id,
+                            "id": user.id,
                             "firstName": user.firstName,
                             "lastName": user.lastName,
                             "email": user.email,
@@ -95,13 +95,13 @@ class LoginView(generics.GenericAPIView):
         
 
 class UserDetailView(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = 'id'
 
 class OrganisationListCreateView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = OrganisationSerializer
 
     def get_queryset(self):
