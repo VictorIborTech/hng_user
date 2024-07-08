@@ -77,7 +77,7 @@ class LoginView(generics.GenericAPIView):
                         
                         'accessToken': str(refresh.access_token),
                         "user":  {
-                            "id": user.id,
+                            "userId": user.userId,
                             "firstName": user.firstName,
                             "lastName": user.lastName,
                             "email": user.email,
@@ -98,7 +98,7 @@ class UserDetailView(generics.RetrieveAPIView):
     # permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    lookup_field = 'id'
+    lookup_field = 'userId'
 
 class OrganisationListCreateView(generics.ListCreateAPIView):
     # permission_classes = [IsAuthenticated]
@@ -154,7 +154,7 @@ class OrganisationListCreateView(generics.ListCreateAPIView):
 class OrganisationDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrganisationSerializer
-    lookup_field = 'id'
+    lookup_field = 'orgId'
 
     def get_queryset(self):
         return Organisation.objects.filter(users=self.request.user)
@@ -174,8 +174,8 @@ class AddUserToOrganisationView(generics.CreateAPIView):
     serializer_class = AddUserToOrganisationSerializer
 
     def create(self, request, *args, **kwargs):
-        id = self.kwargs.get('id')
-        organisation = get_object_or_404(Organisation, id=id)
+        userId = self.kwargs.get('userId')
+        organisation = get_object_or_404(Organisation, userId=userId)
         
         serializer = self.get_serializer(data=request.data, context={'organisation': organisation})
         serializer.is_valid(raise_exception=True)

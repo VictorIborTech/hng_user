@@ -24,10 +24,10 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id', 'firstName', 'lastName', 'email', 'phone', 'password']
+        fields = ['userId', 'firstName', 'lastName', 'email', 'phone', 'password']
         extra_kwargs = {
             'password': {'write_only': True},
-            'id': {'read_only': True}
+            'userId': {'read_only': True}
         }
 
     def create(self, validated_data):
@@ -42,14 +42,14 @@ class LoginSerializer(serializers.Serializer):
 class OrganisationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organisation
-        fields = ['id', 'name', 'description']
-        extra_kwargs = {'id': {'read_only': True}}
+        fields = ['orgId', 'name', 'description']
+        extra_kwargs = {'orgId': {'read_only': True}}
 
 class CreateOrganisationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organisation
-        fields = ['id', 'name', 'description']
-        extra_kwargs = {'id': {'read_only': True}}
+        fields = ['orgId', 'name', 'description']
+        extra_kwargs = {'orgId': {'read_only': True}}
 
     def validate_name(self, value):
         if not value:
@@ -57,17 +57,17 @@ class CreateOrganisationSerializer(serializers.ModelSerializer):
         return value
 
 class AddUserToOrganisationSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    userId = serializers.IntegerField()
 
     def validate_id(self, value):
         try:
-            User.objects.get(id=value)
+            User.objects.get(userId=value)
         except User.DoesNotExist:
             raise serializers.ValidationError("User with this ID does not exist.")
         return value
 
     def create(self, validated_data):
-        user = User.objects.get(id=validated_data['id'])
+        user = User.objects.get(userId=validated_data['userId'])
         organisation = self.context['organisation']
         
         if user in organisation.users.all():
