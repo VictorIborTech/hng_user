@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from django.contrib.auth import login, authenticate, get_user_model
-
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -92,13 +92,60 @@ class LoginView(generics.GenericAPIView):
         }, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 
 class UserDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
-    queryset = User.objects.all()
     lookup_field = 'userId'
+
+    def get_queryset(self):
+        # Limit queryset to only the authenticated user
+        return User.objects.filter(userId=self.request.user.userId)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            # Attempt to get the user object
+            instance = self.get_object()
+            
+            # If the retrieved user is not the authenticated user, deny access
+            if instance != request.user:
+                return Response({
+                    "status": "error",
+                    "message": "You do not have permission to view this user's details."
+                }, status=status.HTTP_403_FORBIDDEN)
+            
+            serializer = self.get_serializer(instance)
+            return Response({
+                "status": "success",
+                "message": "User retrieved successfully",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        
+        except ObjectDoesNotExist:
+            return Response({
+                "status": "error",
+                "message": "User record not found. The provided user ID is incorrect."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
+# class UserDetailView(generics.RetrieveAPIView):
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = UserSerializer
+#     queryset = User.objects.all()
+#     lookup_field = 'userId'
+
+    
+#     def retrieve(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance)
+#         return Response({
+#             "status": "success",
+#             "message": "User retrieved successfully",
+#             "data": serializer.data
+#         }, status=status.HTTP_200_OK)
+    
+    
 
 class OrganisationListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
